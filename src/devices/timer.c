@@ -30,7 +30,7 @@ static void busy_wait (int64_t loops);
 static void real_time_sleep (int64_t num, int32_t denom);
 
 /* Mine */
-static struct list ready_list;
+//static struct list ready_list;
 static struct list blocked_list;
 
 
@@ -51,6 +51,8 @@ timer_init (void)
 
   intr_register_ext (0x20, timer_interrupt, "8254 Timer");
 
+
+  list_init (&blocked_list);
 }
 
 /* Calibrates loops_per_tick, used to implement brief delays. */
@@ -103,22 +105,28 @@ timer_elapsed (int64_t then)
 void
 timer_sleep (int64_t ticks)
 {
+  if(ticks<=0)
+    return;
   ASSERT (intr_get_level () == INTR_ON);
+
 
   enum intr_level old_level;
   old_level = intr_disable ();
+  int64_t start = timer_ticks ();
+  //thread_current()->leftticks=ticks+start;
+  thread_current()->leftticks=ticks;
+
+  list_push_back(&blocked_list, &thread_current()->elem);
+
+  thread_block();
 
 
 
-
-   int64_t start = timer_ticks ();
    intr_set_level (old_level);
 
-
+/*
    while (timer_elapsed (start) < ticks)
-   {
-     thread_yield ();
-   }
+   { thread_yield (); }*/
 }
 
 /* Suspends execution for approximately MS milliseconds. */
@@ -154,7 +162,26 @@ static void
 timer_interrupt (struct intr_frame *args UNUSED)
 {
 
+  struct list_elem *e;
+  struct list_elem *temp;
+  int64_t start1 = timer_ticks ();
+  if(!list_empty(&blocked_list)){
+  for (e = list_begin (&blocked_list); e != list_end (&blocked_list);
+       e = temp)
+       {
+           temp = list_next(e);
+           struct thread *findthread = list_entry (e, struct thread, elem);
+          findthread->leftticks--;
+           if (findthread->leftticks==0)
+           {
+             list_remove(e);
+             thread_unblock(findthread);
+           }
+       }
+
+   }
   ticks++;
+
   thread_tick ();
 
 }
