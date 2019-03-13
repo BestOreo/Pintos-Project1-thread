@@ -34,6 +34,8 @@
 
 
 
+
+
 /* Initializes semaphore SEMA to VALUE.  A semaphore is a
    nonnegative integer along with two atomic operators for
    manipulating it:
@@ -268,6 +270,7 @@ struct semaphore_elem
   {
     struct list_elem elem;              /* List element. */
     struct semaphore semaphore;         /* This semaphore. */
+    int priority;
   };
 
 /* Initializes condition variable COND.  A condition variable
@@ -313,8 +316,9 @@ cond_wait (struct condition *cond, struct lock *lock)
 
   sema_init (&waiter.semaphore, 0);
   //list_push_back (&cond->waiters, &waiter.elem);
+  waiter.priority = thread_current()->priority;
 
-  list_insert_ordered(&cond->waiters, &waiter.elem, less, NULL);
+  list_insert_ordered(&cond->waiters, &waiter.elem, sema_less, NULL);
   lock_release (lock);
   sema_down (&waiter.semaphore);
   lock_acquire (lock);
@@ -355,3 +359,15 @@ cond_broadcast (struct condition *cond, struct lock *lock)
   while (!list_empty (&cond->waiters))
     cond_signal (cond, lock);
 }
+
+
+
+bool sema_less (const struct list_elem *a, const struct list_elem *b,void *aux)
+{
+  //printf("LESS\n");
+  struct semaphore_elem *asema = list_entry (a, struct semaphore_elem, elem);
+  struct semaphore_elem *bsema = list_entry (b, struct semaphore_elem, elem);
+  //printf("LESS 2\n");
+  //printf("a pri: %d and b pri: %d and result : %d\n",athread->priority,bthread->priority,(athread->priority) > (bthread->priority));
+  return ((asema->priority) > (bsema->priority));
+};

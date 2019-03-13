@@ -1,10 +1,11 @@
 FAIL
 Kernel panic in run: PANIC at ../../tests/threads/tests.c:93 in fail(): test failed
-Call stack: 0xc0107329 0xc0109215 0xc010afda 0xc010925b 0xc01000a0 0xc0100641
+Call stack: 0xc0108b3d 0xc010b002 0xc010d09e 0xc010af17 0xc010062d 0xc0100719 0xc0100242
 Translation of call stack:
-0xc0107329: debug_panic (.../../lib/kernel/debug.c:34)
-0xc0109215: run_test (.../tests/threads/tests.c:48)
-0xc010afda: test_mlfqs_load_1 (...threads/mlfqs-load-1.c:41)
-0xc010925b: run_test (.../tests/threads/tests.c:57)
-0xc01000a0: run_task (.../../../threads/init.c:271)
-0xc0100641: run_actions (.../../../threads/init.c:320)
+0xc0108b3d: debug_panic (.../../lib/kernel/debug.c:34)
+0xc010b002: pass (.../tests/threads/tests.c:99)
+0xc010d09e: test_mlfqs_load_1 (...threads/mlfqs-load-1.c:42)
+0xc010af17: run_test (.../tests/threads/tests.c:57)
+0xc010062d: run_task (.../../../threads/init.c:271)
+0xc0100719: run_actions (.../../../threads/init.c:320)
+0xc0100242: main (.../../../threads/init.c:125)

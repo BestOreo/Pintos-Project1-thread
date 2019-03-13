@@ -1,4 +1,4 @@
-Writing command line to /tmp/YLIm27_R4l.dsk...
+Writing command line to /tmp/Ys4XguT_lZ.dsk...
 squish-pty bochs -q
 ========================================================================
                        Bochs x86 Emulator 2.6.2
@@ -7,9 +7,9 @@ squish-pty bochs -q
 ========================================================================
 Kernel command line: -q run priority-donate-multiple
 Pintos booting with 4,096 kB RAM...
-374 pages available in kernel pool.
-374 pages available in user pool.
-Calibrating timer...  204,600 loops/s.
+373 pages available in kernel pool.
+373 pages available in user pool.
+Calibrating timer...  102,400 loops/s.
 Boot complete.
 Executing 'priority-donate-multiple':
 (priority-donate-multiple) begin
@@ -25,8 +25,8 @@ Executing 'priority-donate-multiple':
 (priority-donate-multiple) Main thread should have priority 31.  Actual priority: 31.
 (priority-donate-multiple) end
 Execution of 'priority-donate-multiple' complete.
-Timer: 136 ticks
-Thread: 0 idle ticks, 139 kernel ticks, 0 user ticks
+Timer: 178 ticks
+Thread: 0 idle ticks, 182 kernel ticks, 0 user ticks
 Console: 1103 characters output
 Keyboard: 0 keys pressed
 Powering off...
