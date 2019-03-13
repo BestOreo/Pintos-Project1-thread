@@ -215,9 +215,9 @@ thread_create (const char *name, int priority,
   /* Add to run queue. */
   thread_unblock (t);
 
-  //list_insert_ordered(&ready_list, &t->elem, &less, NULL);
+
   //list_insert(list_begin(&ready_list), &t->elem);
-  //list_push_back(&ready_list,&t->elem);
+
   struct list_elem *e;
   /*for (e = list_begin (&ready_list); e != list_end (&ready_list); e = list_next (e))
   {
@@ -270,12 +270,7 @@ thread_unblock (struct thread *t)
   ASSERT (t->status == THREAD_BLOCKED);
 
 
-  list_insert_ordered(&ready_list, &t->elem, &less, NULL);
-  //list_insert(list_begin(&ready_list), &t->elem);
-  //list_push_back(&ready_list,&t->elem);
-
-  //list_push_back(&ready_list,&t->elem);
-
+  list_insert_ordered(&ready_list, &t->elem, less, NULL);
 
   t->status = THREAD_READY;
   intr_set_level (old_level);
@@ -345,8 +340,8 @@ thread_yield (void)
 
   old_level = intr_disable ();
   if (curr != idle_thread)
-    //list_push_back (&ready_list, &curr->elem);
-    list_insert_ordered(&ready_list, &curr->elem, &less, NULL);
+
+    list_insert_ordered(&ready_list, &curr->elem, less, NULL);
   curr->status = THREAD_READY;
   schedule ();
   intr_set_level (old_level);
@@ -361,7 +356,7 @@ thread_set_priority (int new_priority)
   struct thread *curr = thread_current ();
 
 
-  //printf("SET ID %s and List_FROMT ID %s\n",thread_current()->name,)
+
   if(!list_empty(&ready_list))
   {
     struct thread* frontthread = list_entry(list_front(&ready_list),struct thread, elem);

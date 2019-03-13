@@ -1,4 +1,4 @@
-Writing command line to /tmp/xHZ9ZO7_V0.dsk...
+Writing command line to /tmp/d786c4Nlaa.dsk...
 squish-pty bochs -q
 ========================================================================
                        Bochs x86 Emulator 2.6.2
@@ -7,7 +7,7 @@ squish-pty bochs -q
 ========================================================================
 Kernel command line: -q -mlfqs run mlfqs-load-1
 Pintos booting with 4,096 kB RAM...
-375 pages available in kernel pool.
+374 pages available in kernel pool.
 374 pages available in user pool.
 Calibrating timer...  204,600 loops/s.
 Boot complete.
@@ -16,7 +16,7 @@ Executing 'mlfqs-load-1':
 (mlfqs-load-1) spinning for up to 45 seconds, please wait...
 (mlfqs-load-1) FAIL: load average stayed below 0.5 for more than 45 seconds
 Kernel PANIC at ../../tests/threads/tests.c:93 in fail(): test failed
-Call stack: 0xc01070f9 0xc0108fe5 0xc010adaa 0xc010902b 0xc01000a0 0xc0100641.
+Call stack: 0xc0107329 0xc0109215 0xc010afda 0xc010925b 0xc01000a0 0xc0100641.
 The `backtrace' program can make call stacks useful.
 Read "Backtraces" in the "Debugging Tools" chapter
 of the Pintos documentation for more information.

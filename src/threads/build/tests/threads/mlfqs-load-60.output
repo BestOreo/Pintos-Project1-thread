@@ -1,4 +1,4 @@
-Writing command line to /tmp/dQ7ArPCgKj.dsk...
+Writing command line to /tmp/Je0OeJx5L4.dsk...
 squish-pty bochs -q
 ========================================================================
                        Bochs x86 Emulator 2.6.2
@@ -7,7 +7,7 @@ squish-pty bochs -q
 ========================================================================
 Kernel command line: -q -mlfqs run mlfqs-load-60
 Pintos booting with 4,096 kB RAM...
-375 pages available in kernel pool.
+374 pages available in kernel pool.
 374 pages available in user pool.
 Calibrating timer...  204,600 loops/s.
 Boot complete.
@@ -108,7 +108,7 @@ Executing 'mlfqs-load-60':
 (mlfqs-load-60) end
 Execution of 'mlfqs-load-60' complete.
 Timer: 18841 ticks
-Thread: 11941 idle ticks, 6903 kernel ticks, 0 user ticks
+Thread: 11917 idle ticks, 6928 kernel ticks, 0 user ticks
 Console: 5298 characters output
 Keyboard: 0 keys pressed
 Powering off...
