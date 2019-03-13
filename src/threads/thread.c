@@ -15,6 +15,16 @@
 #include "userprog/process.h"
 #endif
 
+bool less (const struct list_elem *a, const struct list_elem *b,void *aux)
+{
+  //printf("LESS\n");
+  struct thread *athread = list_entry (a, struct thread, elem);
+  struct thread *bthread = list_entry (b, struct thread, elem);
+  //printf("LESS 2\n");
+  //printf("a pri: %d and b pri: %d and result : %d\n",athread->priority,bthread->priority,(athread->priority) > (bthread->priority));
+  return ((athread->priority) > (bthread->priority));
+};
+
 
 /* Random value for struct thread's `magic' member.
    Used to detect stack overflow.  See the big comment at the top
@@ -205,6 +215,23 @@ thread_create (const char *name, int priority,
   /* Add to run queue. */
   thread_unblock (t);
 
+  //list_insert_ordered(&ready_list, &t->elem, &less, NULL);
+  //list_insert(list_begin(&ready_list), &t->elem);
+  //list_push_back(&ready_list,&t->elem);
+  struct list_elem *e;
+  /*for (e = list_begin (&ready_list); e != list_end (&ready_list); e = list_next (e))
+  {
+    printf("priority : %d and name : %s\n",list_entry(e,struct thread, elem)->priority
+    ,list_entry(e,struct thread, elem)->name);
+  }*/
+
+    if(priority>running_thread()->priority)
+    {
+      //printf("Need change\n");
+      thread_yield();
+    }
+
+  //printf("\n---------\n");
   return tid;
 }
 
@@ -243,8 +270,12 @@ thread_unblock (struct thread *t)
   ASSERT (t->status == THREAD_BLOCKED);
 
 
+  list_insert_ordered(&ready_list, &t->elem, &less, NULL);
+  //list_insert(list_begin(&ready_list), &t->elem);
+  //list_push_back(&ready_list,&t->elem);
 
-  list_push_back(&ready_list,&t->elem);
+  //list_push_back(&ready_list,&t->elem);
+
 
   t->status = THREAD_READY;
   intr_set_level (old_level);
@@ -314,7 +345,8 @@ thread_yield (void)
 
   old_level = intr_disable ();
   if (curr != idle_thread)
-    list_push_back (&ready_list, &curr->elem);
+    //list_push_back (&ready_list, &curr->elem);
+    list_insert_ordered(&ready_list, &curr->elem, &less, NULL);
   curr->status = THREAD_READY;
   schedule ();
   intr_set_level (old_level);
@@ -325,6 +357,22 @@ void
 thread_set_priority (int new_priority)
 {
   thread_current ()->priority = new_priority;
+
+  struct thread *curr = thread_current ();
+
+
+  //printf("SET ID %s and List_FROMT ID %s\n",thread_current()->name,)
+  if(!list_empty(&ready_list))
+  {
+    struct thread* frontthread = list_entry(list_front(&ready_list),struct thread, elem);
+      if(new_priority< frontthread->priority)
+      {
+        //printf("JIN Need change\n");
+        thread_yield();
+      }
+
+  }
+
 }
 
 /* Returns the current thread's priority. */
