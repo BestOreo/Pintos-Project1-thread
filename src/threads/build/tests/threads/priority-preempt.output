@@ -1,4 +1,4 @@
-Writing command line to /tmp/e8uMus2Vcj.dsk...
+Writing command line to /tmp/vfg7LZ8Bdl.dsk...
 squish-pty bochs -q
 ========================================================================
                        Bochs x86 Emulator 2.6.2
@@ -22,8 +22,8 @@ Executing 'priority-preempt':
 (priority-preempt) The high-priority thread should have already completed.
 (priority-preempt) end
 Execution of 'priority-preempt' complete.
-Timer: 118 ticks
-Thread: 0 idle ticks, 121 kernel ticks, 0 user ticks
+Timer: 123 ticks
+Thread: 0 idle ticks, 127 kernel ticks, 0 user ticks
 Console: 776 characters output
 Keyboard: 0 keys pressed
 Powering off...

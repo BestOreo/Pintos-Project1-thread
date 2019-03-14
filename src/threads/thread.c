@@ -129,6 +129,7 @@ thread_start (void)
   /* Start preemptive thread scheduling. */
   intr_enable ();
 
+
   /* Wait for the idle thread to initialize idle_thread. */
   sema_down (&idle_started);
 }
@@ -353,6 +354,7 @@ void
 thread_set_priority (int new_priority)
 {
   thread_current ()->priority = new_priority;
+  thread_current()->original_priority=new_priority;
 
   struct thread *curr = thread_current ();
 
@@ -494,6 +496,11 @@ init_thread (struct thread *t, const char *name, int priority)
   t->stack = (uint8_t *) t + PGSIZE;
   t->priority = priority;
   t->magic = THREAD_MAGIC;
+
+
+  list_init(&t->having_lock_list);
+  t->original_priority=priority;
+  t->locknums=0;
 }
 
 /* Allocates a SIZE-byte frame at the top of thread T's stack and

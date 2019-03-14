@@ -4,6 +4,15 @@
 #include <list.h>
 #include <stdbool.h>
 
+struct saved_priority
+  {
+    struct list_elem elem;
+    int priority;
+    struct lock *lock;
+
+  };
+
+
 /* A counting semaphore. */
 struct semaphore
   {
@@ -22,6 +31,8 @@ struct lock
   {
     struct thread *holder;      /* Thread holding lock (for debugging). */
     struct semaphore semaphore; /* Binary semaphore controlling access. */
+    //int original_priority;
+    struct list_elem elem;
   };
 
 void lock_init (struct lock *);

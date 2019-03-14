@@ -109,6 +109,8 @@ main (void)
   serial_init_queue ();
   timer_calibrate ();
 
+
+
 #ifdef FILESYS
   /* Initialize file system. */
   disk_init ();

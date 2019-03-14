@@ -1,4 +1,4 @@
-Writing command line to /tmp/F1WeULq1k2.dsk...
+Writing command line to /tmp/KtU3m90Fy5.dsk...
 squish-pty bochs -q
 ========================================================================
                        Bochs x86 Emulator 2.6.2
@@ -13,7 +13,7 @@ Calibrating timer...  102,400 loops/s.
 Boot complete.
 Executing 'priority-donate-lower':
 (priority-donate-lower) begin
-(priority-donate-lower) Main thread should have priority 41.  Actual priority: 31.
+(priority-donate-lower) Main thread should have priority 41.  Actual priority: 41.
 (priority-donate-lower) Lowering base priority...
 (priority-donate-lower) Main thread should have priority 41.  Actual priority: 21.
 (priority-donate-lower) acquire: got the lock
@@ -22,8 +22,8 @@ Executing 'priority-donate-lower':
 (priority-donate-lower) Main thread should have priority 21.  Actual priority: 21.
 (priority-donate-lower) end
 Execution of 'priority-donate-lower' complete.
-Timer: 136 ticks
-Thread: 0 idle ticks, 139 kernel ticks, 0 user ticks
+Timer: 146 ticks
+Thread: 0 idle ticks, 149 kernel ticks, 0 user ticks
 Console: 863 characters output
 Keyboard: 0 keys pressed
 Powering off...
