@@ -91,6 +91,7 @@ struct thread
     struct list having_lock_list;
     int original_priority;
     int locknums;
+    struct lock *blocked_lock;
 
 
     /* Shared between thread.c and synch.c. */

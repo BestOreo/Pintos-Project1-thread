@@ -188,6 +188,8 @@ thread_create (const char *name, int priority,
   struct switch_entry_frame *ef;
   struct switch_threads_frame *sf;
   tid_t tid;
+  //
+  // printf("%s : %d\n", thread_current() -> name, thread_get_priority());
 
   ASSERT (function != NULL);
 
@@ -501,6 +503,7 @@ init_thread (struct thread *t, const char *name, int priority)
   list_init(&t->having_lock_list);
   t->original_priority=priority;
   t->locknums=0;
+  t->blocked_lock=NULL;
 }
 
 /* Allocates a SIZE-byte frame at the top of thread T's stack and
@@ -524,10 +527,13 @@ alloc_frame (struct thread *t, size_t size)
 static struct thread *
 next_thread_to_run (void)
 {
+
   if (list_empty (&ready_list))
     return idle_thread;
-  else
+  else{
+    list_sort(&ready_list,less,NULL);
     return list_entry (list_pop_front (&ready_list), struct thread, elem);
+  }
 }
 
 /* Completes a thread switch by activating the new thread's page

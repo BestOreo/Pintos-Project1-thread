@@ -1,3 +1,4 @@
+
 /* This file is derived from source code for the Nachos
    instructional operating system.  The Nachos copyright notice
    is reproduced in full below. */
@@ -114,6 +115,7 @@ sema_up (struct semaphore *sema)
   sema->value++;
   if (!list_empty (&sema->waiters))
     {
+      list_sort(&sema->waiters,less,NULL);
       struct thread* temp = list_entry (list_pop_front (&sema->waiters),struct thread, elem);
       thread_unblock (temp);
 
@@ -186,7 +188,26 @@ lock_init (struct lock *lock)
   ASSERT (lock != NULL);
 
   lock->holder = NULL;
+  lock->donated_priority = PRI_MIN;
+
   sema_init (&lock->semaphore, 1);
+}
+
+void
+lock_donate(struct lock *lock)
+{
+  if(lock->donated_priority<thread_current()->priority)
+    lock->donated_priority=thread_current()->priority;
+  if(lock->holder->priority<thread_current()->priority){
+    lock->holder->priority=thread_current()->priority;
+
+  }
+  if(lock->holder->blocked_lock!=NULL)
+  {
+    if(lock->holder->blocked_lock->holder!=NULL)
+      lock_donate(lock->holder->blocked_lock);
+  }
+
 }
 
 /* Acquires LOCK, sleeping until it becomes available if
@@ -202,34 +223,41 @@ lock_acquire (struct lock *lock)
   ASSERT (lock != NULL);
   ASSERT (!intr_context ());
   ASSERT (!lock_held_by_current_thread (lock));
-
   enum intr_level old_level;
   old_level = intr_disable ();
-
   if(lock->holder!=NULL){
+    lock_donate(lock);
+  }
+  intr_set_level (old_level);
+  thread_current()->blocked_lock=lock;
+  sema_down (&lock->semaphore);
+  thread_current()->blocked_lock=NULL;
 
-
-    if(lock->holder->priority<thread_current()->priority)
-    {
-      struct saved_priority *temp_saved_priority = malloc(sizeof(struct saved_priority));
-      temp_saved_priority->priority=lock->holder->priority;
-      temp_saved_priority->lock=lock;
-
-      list_push_back(&lock->holder->having_lock_list, &temp_saved_priority->elem);
-
-
-      lock->holder->priority=thread_current()->priority;
-
-    }
+  if(!lock_inlist(lock, &thread_current()->having_lock_list))
+  {
+    list_push_back(&thread_current()->having_lock_list,&lock->elem);
   }
 
-  intr_set_level (old_level);
-
-  sema_down (&lock->semaphore);
-  thread_current()->locknums++;
-  //lock->original_priority=thread_current()->priority;
+  lock->donated_priority=thread_current()->priority;
   lock->holder = thread_current();
 }
+
+
+bool
+lock_inlist(struct lock *lock, struct list *list)
+{
+  struct list_elem *e;
+
+
+  for (e = list_begin (list); e != list_end (list); e = list_next (e))
+  {
+    struct lock *templock = list_entry(e, struct lock, elem);
+    if (templock==lock)
+      return true;
+  }
+  return false;
+}
+
 
 /* Tries to acquires LOCK and returns true if successful or false
    on failure.  The lock must not already be held by the current
@@ -260,25 +288,40 @@ lock_release (struct lock *lock)
 {
   ASSERT (lock != NULL);
   ASSERT (lock_held_by_current_thread (lock));
-  if(!list_empty(&thread_current()->having_lock_list)){
 
-    struct saved_priority* forfree = list_entry (list_back (&thread_current()->having_lock_list), struct saved_priority, elem);
-    if(lock==forfree->lock){
+  thread_current()->priority = thread_current()->original_priority;
 
-      thread_current()->priority=forfree->priority;
-      list_pop_back(&thread_current()->having_lock_list);
-      free(forfree);
-    }
+  struct list_elem *e, *tempe;
+  bool maxinlist = false, locktorelease=false;
+  struct list *templist = &thread_current()->having_lock_list;
 
-  }
-  if(thread_current()->locknums==1)
+  if(lock_inlist(lock, &thread_current()->having_lock_list))
+    list_remove(&lock->elem);
+  for (e = list_begin (templist); e != list_end (templist); e = list_next (e))
   {
-    thread_current()->priority=thread_current()->original_priority;
+    struct lock *templock = list_entry(e, struct lock, elem);
+    if (templock==lock)
+      locktorelease=true;
+    if (templock->donated_priority>thread_current()->priority){
+      thread_current()->priority=templock->donated_priority;
+      maxinlist=true;
+      tempe=e;
+    }
   }
+
+  if(maxinlist)
+  {
+    struct lock *changetozero = list_entry(tempe,struct lock, elem);
+    if(locktorelease)
+      changetozero->donated_priority=PRI_MIN;
+  }
+
+
+
+
 
 
   lock->holder = NULL;
-  thread_current()->locknums--;
   sema_up (&lock->semaphore);
 }
 
