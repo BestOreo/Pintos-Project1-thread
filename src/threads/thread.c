@@ -218,24 +218,7 @@ thread_create (const char *name, int priority,
 
   /* Add to run queue. */
   thread_unblock (t);
-
-
-  //list_insert(list_begin(&ready_list), &t->elem);
-
-  struct list_elem *e;
-  /*for (e = list_begin (&ready_list); e != list_end (&ready_list); e = list_next (e))
-  {
-    printf("priority : %d and name : %s\n",list_entry(e,struct thread, elem)->priority
-    ,list_entry(e,struct thread, elem)->name);
-  }*/
-
-    if(priority>running_thread()->priority)
-    {
-      //printf("Need change\n");
-      thread_yield();
-    }
-
-  //printf("\n---------\n");
+  thread_yield();
   return tid;
 }
 
@@ -355,8 +338,16 @@ thread_yield (void)
 void
 thread_set_priority (int new_priority)
 {
+
+  if((new_priority<thread_current()->priority)
+  &&(thread_current()->priority!=thread_current()->original_priority)){
+    thread_current()->original_priority=new_priority;
+    return;
+  }
+
   thread_current ()->priority = new_priority;
   thread_current()->original_priority=new_priority;
+
 
   struct thread *curr = thread_current ();
 
@@ -367,12 +358,11 @@ thread_set_priority (int new_priority)
     struct thread* frontthread = list_entry(list_front(&ready_list),struct thread, elem);
       if(new_priority< frontthread->priority)
       {
-        //printf("JIN Need change\n");
         thread_yield();
+
       }
 
   }
-
 }
 
 /* Returns the current thread's priority. */

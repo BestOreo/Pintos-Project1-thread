@@ -1,4 +1,4 @@
-Writing command line to /tmp/30pjkqPIvz.dsk...
+Writing command line to /tmp/0t0o9X4YtZ.dsk...
 squish-pty bochs -q
 ========================================================================
                        Bochs x86 Emulator 2.6.2
@@ -34,7 +34,7 @@ Executing 'priority-fifo':
 (priority-fifo) end
 Execution of 'priority-fifo' complete.
 Timer: 593 ticks
-Thread: 0 idle ticks, 597 kernel ticks, 0 user ticks
+Thread: 0 idle ticks, 596 kernel ticks, 0 user ticks
 Console: 1555 characters output
 Keyboard: 0 keys pressed
 Powering off...

@@ -1,4 +1,4 @@
-Writing command line to /tmp/Rq7TRWW49F.dsk...
+Writing command line to /tmp/NWgVIQ15hw.dsk...
 squish-pty bochs -q
 ========================================================================
                        Bochs x86 Emulator 2.6.2
@@ -16,8 +16,8 @@ Executing 'alarm-zero':
 (alarm-zero) PASS
 (alarm-zero) end
 Execution of 'alarm-zero' complete.
-Timer: 55 ticks
-Thread: 0 idle ticks, 59 kernel ticks, 0 user ticks
+Timer: 54 ticks
+Thread: 0 idle ticks, 58 kernel ticks, 0 user ticks
 Console: 381 characters output
 Keyboard: 0 keys pressed
 Powering off...
