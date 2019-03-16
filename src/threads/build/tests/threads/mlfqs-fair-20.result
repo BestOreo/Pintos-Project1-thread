@@ -1,1 +1,24 @@
-PASS
+FAIL
+Some tick counts were missing or differed from those expected by more than 20.
+thread   actual <-> expected explanation
+------ -------- --- -------- ----------------------------------------
+     0      112 <<< 152      Too small, by 20.
+     1      115 <<< 152      Too small, by 17.
+     2      115 <<< 152      Too small, by 17.
+     3      114 <<< 152      Too small, by 18.
+     4      114 <<< 152      Too small, by 18.
+     5      114 <<< 152      Too small, by 18.
+     6      115 <<< 152      Too small, by 17.
+     7      114 <<< 152      Too small, by 18.
+     8      115 <<< 152      Too small, by 17.
+     9      112 <<< 152      Too small, by 20.
+    10      112 <<< 148      Too small, by 16.
+    11      111 <<< 148      Too small, by 17.
+    12      111 <<< 148      Too small, by 17.
+    13      112 <<< 148      Too small, by 16.
+    14      114 <<< 148      Too small, by 14.
+    15      112 <<< 148      Too small, by 16.
+    16      111 <<< 148      Too small, by 17.
+    17      112 <<< 148      Too small, by 16.
+    18      112 <<< 148      Too small, by 16.
+    19      111 <<< 148      Too small, by 17.

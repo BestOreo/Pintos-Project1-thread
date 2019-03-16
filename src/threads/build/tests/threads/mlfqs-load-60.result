@@ -1,14 +1,1 @@
-FAIL
-Kernel panic in run: PANIC at ../../threads/thread.c:366 in thread_yield(): assertion `!intr_context ()' failed.
-Call stack: 0xc01077a9 0xc0100ce8 0xc0100da4 0xc0100de6 0xc010129c 0xc010403c 0xc0101a77 0xc0101baf 0xc01019ae 0xc01011d2
-Translation of call stack:
-0xc01077a9: debug_panic (.../../lib/kernel/debug.c:34)
-0xc0100ce8: thread_yield (..../../threads/thread.c:368)
-0xc0100da4: thread_set_priority (..../../threads/thread.c:406)
-0xc0100de6: thread_recalculate_priority (..../../threads/thread.c:438)
-0xc010129c: thread_tick (..../../threads/thread.c:172)
-0xc010403c: timer_interrupt (...../../devices/timer.c:183)
-0xc0101a77: intr_handler (..../threads/interrupt.c:361)
-0xc0101baf: intr_entry (threads/intr-stubs.S:38)
-0xc01019ae: intr_enable (...../threads/interrupt.c:87)
-0xc01011d2: kernel_thread (..../../threads/thread.c:552)
+PASS

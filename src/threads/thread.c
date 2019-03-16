@@ -65,7 +65,7 @@ struct kernel_thread_frame
 static long long idle_ticks;    /* # of timer ticks spent idle. */
 static long long kernel_ticks;  /* # of timer ticks in kernel threads. */
 static long long user_ticks;    /* # of timer ticks in user programs. */
-
+struct list_elem *jin;
 static int ready_threads=0;
 static int load_avg=0;
 
@@ -115,11 +115,10 @@ thread_init (void)
   list_init (&ready_list);
   // list_init (&blocked_list);
   list_init (&threads_list);
-
+  load_avg=0;
   /* Set up a thread structure for the running thread. */
   initial_thread = running_thread ();
   init_thread (initial_thread, "main", PRI_DEFAULT);
-  load_avg=0;
   initial_thread->status = THREAD_RUNNING;
   initial_thread->tid = allocate_tid ();
 }
@@ -164,17 +163,7 @@ thread_tick (void)
 
   if(thread_mlfqs==true)
   {
-    struct list_elem *jin;
-    if(timer_ticks()%4==0)
-    {
 
-      for (jin = list_begin (&threads_list); jin != list_end (&threads_list);
-           jin = list_next(jin))
-           {
-               struct thread *findthread2 = list_entry (jin, struct thread, elem2);
-               thread_recalculate_priority(findthread2);
-           }
-    }
     if(timer_ticks()%TIMER_FREQ==0)
     {
       thread_set_load_avg();
@@ -185,6 +174,17 @@ thread_tick (void)
                thread_set_recent_cpu(findthread3);
            }
     }
+    if(timer_ticks()%4==0)
+    {
+
+      for (jin = list_begin (&threads_list); jin != list_end (&threads_list);
+           jin = list_next(jin))
+           {
+               struct thread *findthread2 = list_entry (jin, struct thread, elem2);
+               thread_recalculate_priority(findthread2);
+           }
+    }
+
   }
   /* Enforce preemption. */
   if (thread_ticks >= TIME_SLICE)
@@ -271,7 +271,11 @@ thread_block (void)
   ASSERT (!intr_context ());
   ASSERT (intr_get_level () == INTR_OFF);
 
+  if(strcmp(thread_current()->name,"idle")!=0)
+    ready_threads--;
   thread_current ()->status = THREAD_BLOCKED;
+
+
   schedule ();
 }
 
@@ -281,7 +285,6 @@ thread_block (void)
 
    This function does not preempt the running thread.  This can
    be important: if the caller had disabled interrupts itself,
-   it may expect that it can atomically unblock a thread and
    update other data. */
 void
 thread_unblock (struct thread *t)
@@ -297,6 +300,7 @@ thread_unblock (struct thread *t)
   list_insert_ordered(&ready_list, &t->elem, less, NULL);
 
   t->status = THREAD_READY;
+  ready_threads++;
   intr_set_level (old_level);
 }
 
@@ -349,8 +353,8 @@ thread_exit (void)
   intr_disable ();
   list_remove(&thread_current()->elem2);
   thread_current ()->status = THREAD_DYING;
-
-
+  if(ready_threads>0)
+    ready_threads--;
   schedule ();
   NOT_REACHED ();
 }
@@ -398,7 +402,11 @@ thread_set_priority (int new_priority)
     struct thread* frontthread = list_entry(list_front(&ready_list),struct thread, elem);
       if(new_priority< frontthread->priority)
       {
-        thread_yield();
+        // thread_yield();
+        if(intr_context())
+          intr_yield_on_return ();
+        else
+          thread_yield();
 
       }
 
@@ -431,24 +439,18 @@ void
 thread_recalculate_priority(struct thread* t) {
 
 
-  thread_set_priority(con_to_int_round0(con_to_float(PRI_MAX) - (float_int_div(thread_get_recent_cpu(),4)) - con_to_float(2*thread_get_nice(t))));
+  thread_set_priority(con_to_int_round0(con_to_float(PRI_MAX) - (float_float_div(thread_get_recent_cpu(),con_to_float(4))) - con_to_float(2*thread_get_nice(t))));
 
        //t->recent_cpu나 t->nice 로 가져오는거 보다 get_recent_cpu나 get_nice로 가져오는게 더 최신화 된애 아닐까
 
 }
 
-void
-thread_recalculate_recent_cpu(struct thread* t) {
-  // thread_set_recent_cpu(PRI_MAX - (t->recent_cpu/4)-(2*t->nice));
-  // t->priority = PRI_MAX - (t->recent_cpu/4)-(2*t->nice);
-  return;
-}
 
 void
 thread_set_recent_cpu(struct thread* t)
 {
-  t->recent_cpu = float_int_add(float_float_mult(float_float_div(float_int_mult(load_avg,2),
-   float_int_add(float_int_mult(load_avg,2),1)),t->recent_cpu),t->nice);
+  t->recent_cpu = float_float_add(float_float_mult(float_float_div(float_float_mult(load_avg,con_to_float(2)),
+   float_float_add(float_float_mult(load_avg,con_to_float(2)),con_to_float(1))),t->recent_cpu),con_to_float(t->nice));
    return;
 }
 
@@ -465,15 +467,29 @@ thread_get_nice (struct thread *t)
 int
 thread_get_load_avg (void)
 {
+
+  // thread_set_load_avg();
   /* Not yet implemented. */             // get 할때 없데이트 된 애를 가져오는게 낫지 않나
-  return con_to_int_roundnear(float_int_mult(load_avg,100));
+
+
+  int z= con_to_int_roundnear(float_int_mult(load_avg,100));
+  // int z = con_to_int_roundnear(load_avg)*100;
+
+  return z;
+
 }
 
 void
 thread_set_load_avg(void)
 {
-  load_avg = float_int_add(float_int_div(float_int_mult(load_avg,59),60) ,(thread_get_ready_threads()/60));
 
+  // load_avg = float_float_add(float_float_div(float_int_mult(load_avg,59),con_to_float(60)) ,
+  // float_float_div(con_to_float(ready_threads),con_to_float(60)));
+
+  load_avg = float_int_div(load_avg*59,60) + float_int_div(con_to_float(ready_threads),60);
+  // load_avg = float_float_add(float_float_div(float_float_mult(load_avg,con_to_float(59)),con_to_float(60)) ,float_float_div(con_to_float(thread_get_ready_threads()),con_to_float(60)));
+  // load_avg = ((load_avg)>>1)<<1;
+  // printf("JIN - %d and READY %d\n",load_avg,ready_threads);
 }
 
 int thread_get_ready_threads(void)
@@ -497,7 +513,8 @@ int
 thread_get_recent_cpu (void)
 {
   // return 0;
-  return con_to_int_roundnear(float_int_mult(thread_current()->recent_cpu,100));
+  thread_set_recent_cpu(thread_current());
+  return con_to_int_roundnear(float_float_mult(thread_current()->recent_cpu,con_to_float(100)));
 
 //  사실상 여기서 calculate를 하면 안되나
   /* Not yet implemented. */
