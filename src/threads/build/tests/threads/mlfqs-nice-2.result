@@ -1,6 +1,18 @@
 FAIL
-Some tick counts were missing or differed from those expected by more than 50.
-thread   actual <-> expected explanation
------- -------- --- -------- ----------------------------------------
-     0     1500 <<< 1904     Too small, by 354.
-     1     1500 >>> 1096     Too big, by 354.
+Kernel panic in run: PANIC at ../../threads/thread.c:366 in thread_yield(): assertion `!intr_context ()' failed.
+Call stack: 0xc01077a9 0xc0100ce8 0xc0100da4 0xc0100de6 0xc010129c 0xc010403c 0xc0101a77 0xc0101baf 0xc01019b1 0xc01019c5 0xc0103cc1 0xc0103d08 0xc010bf01 0xc01011da
+Translation of call stack:
+0xc01077a9: debug_panic (.../../lib/kernel/debug.c:34)
+0xc0100ce8: thread_yield (..../../threads/thread.c:368)
+0xc0100da4: thread_set_priority (..../../threads/thread.c:406)
+0xc0100de6: thread_recalculate_priority (..../../threads/thread.c:438)
+0xc010129c: thread_tick (..../../threads/thread.c:172)
+0xc010403c: timer_interrupt (...../../devices/timer.c:183)
+0xc0101a77: intr_handler (..../threads/interrupt.c:361)
+0xc0101baf: intr_entry (threads/intr-stubs.S:38)
+0xc01019b1: intr_enable (...../threads/interrupt.c:87)
+0xc01019c5: intr_set_level (...../threads/interrupt.c:70)
+0xc0103cc1: timer_ticks (.../../../devices/timer.c:94)
+0xc0103d08: timer_elapsed (...../../devices/timer.c:101)
+0xc010bf01: load_thread (.../threads/mlfqs-fair.c:117)
+0xc01011da: kernel_thread (..../../threads/thread.c:553)

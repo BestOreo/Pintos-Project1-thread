@@ -161,29 +161,25 @@ timer_print_stats (void)
 static void
 timer_interrupt (struct intr_frame *args UNUSED)
 {
-
   struct list_elem *e;
   struct list_elem *temp;
   int64_t start1 = timer_ticks ();
   if(!list_empty(&blocked_list)){
-  for (e = list_begin (&blocked_list); e != list_end (&blocked_list);
-       e = temp)
-       {
-           temp = list_next(e);
-           struct thread *findthread = list_entry (e, struct thread, elem);
-          findthread->leftticks--;
-           if (findthread->leftticks==0)
-           {
-             list_remove(e);
-             thread_unblock(findthread);
-           }
-       }
+    for (e = list_begin (&blocked_list); e != list_end (&blocked_list); e = temp)
+         {
+             temp = list_next(e);
+             struct thread *findthread = list_entry (e, struct thread, elem);
+             findthread->leftticks--;
+             if (findthread->leftticks==0)
+             {
+               list_remove(e);
+               thread_unblock(findthread);
+             }
+         }
+  }
 
-   }
   ticks++;
-
   thread_tick ();
-
 }
 
 /* Returns true if LOOPS iterations waits for more than one timer

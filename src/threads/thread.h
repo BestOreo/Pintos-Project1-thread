@@ -92,7 +92,10 @@ struct thread
     int original_priority;
     int locknums;
     struct lock *blocked_lock;
+    int recent_cpu;
+    int nice;
 
+    struct list_elem elem2;
 
     /* Shared between thread.c and synch.c. */
     struct list_elem elem;              /* List element. */
@@ -135,11 +138,16 @@ void thread_yield (void);
 int thread_get_priority (void);
 void thread_set_priority (int);
 
-int thread_get_nice (void);
+void thread_recalculate_priority(struct thread *);
+void thread_recalculate_recent_cpu(struct thread *);
+int thread_get_nice (struct thread *);
 void thread_set_nice (int);
 int thread_get_recent_cpu (void);
+// void thread_set_recent_cpu(void);
 int thread_get_load_avg (void);
-
+int thread_get_ready_threads(void);
+void thread_set_load_avg(void);
 bool less (const struct list_elem *a, const struct list_elem *b,void *aux);
+void thread_set_recent_cpu(struct thread* t);
 
 #endif /* threads/thread.h */

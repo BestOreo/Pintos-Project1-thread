@@ -24,4 +24,4 @@ pass tests/threads/mlfqs-fair-2
 pass tests/threads/mlfqs-fair-20
 FAIL tests/threads/mlfqs-nice-2
 FAIL tests/threads/mlfqs-nice-10
-pass tests/threads/mlfqs-block
+FAIL tests/threads/mlfqs-block
